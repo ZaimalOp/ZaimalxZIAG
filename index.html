@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZAIMALxZAIG | Premium PUBG Exchange</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* =========================================
+           1. CORE VARIABLES & RESET
+           ========================================= */
+        :root {
+            --primary: #f2a900; /* PUBG Gold */
+            --accent: #00e5ff; /* Cyan/Electric */
+            --dark-bg: #050505;
+            --card-bg: rgba(20, 20, 20, 0.7);
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --danger: #ff2a2a;
+            --success: #00ff6a;
+            --font-head: 'Orbitron', sans-serif;
+            --font-body: 'Rajdhani', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        /* Canvas for Particle Effect */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        /* =========================================
+           2. UTILITIES & TYPOGRAPHY
+           ========================================= */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        h1, h2, h3 {
+            font-family: var(--font-head);
+            text-transform: uppercase;
+        }
+
+        .highlight {
+            color: var(--primary);
+        }
+        
+        .accent-text {
+            color: var(--accent);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            font-family: var(--font-head);
+            font-weight: 700;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background: #fff;
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        .btn-accent {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-accent:hover {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 20px var(--accent);
+        }
+
+        /* =========================================
+           3. NAVBAR
+           ========================================= */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(5, 5, 5, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+            padding: 15px 0;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-head);
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: var(--primary);
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* =========================================
+           4. HERO SECTION
+           ========================================= */
+        header {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding-top: 80px;
+            position: relative;
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(0,0,0,0.8);
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .glitch {
+            position: relative;
+        }
+        
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-num {
+            display: block;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            font-family: var(--font-head);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* =========================================
+           5. SERVICES
+           ========================================= */
+        .section-padding {
+            padding: 100px 0;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid var(--border);
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            transition: 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px -10px rgba(242, 169, 0, 0.2);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .service-card h3 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        /* =========================================
+           6. LIVE INVENTORY (MOCKUP)
+           ========================================= */
+        .inventory-filters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: var(--font-body);
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+        }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .account-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: 0.3s;
+        }
+
+        .account-card:hover {
+            border-color: var(--accent);
+        }
+
+        .card-img {
+            height: 180px;
+            background: #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            position: relative;
+        }
+        
+        .card-img i {
+            font-size: 3rem;
+        }
+
+        .badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--primary);
+            color: #000;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-price {
+            font-size: 1.5rem;
+            color: var(--success);
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .card-specs {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .card-specs li {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-specs li i {
+            color: var(--accent);
+        }
+
+        /* =========================================
+           7. TRUST & SAFETY
+           ========================================= */
+        .trust-section {
+            background: linear-gradient(0deg, rgba(5,5,5,1) 0%, rgba(20,20,20,1) 100%);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .features-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .feature-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(255,255,255,0.03);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .feature-row.warning {
+            border-left-color: var(--danger);
+            background: rgba(255, 42, 42, 0.05);
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        /* =========================================
+           8. TESTIMONIALS & CTA
+           ========================================= */
+        .reviews {
+            text-align: center;
+        }
+
+        .review-card {
+            background: var(--glass);
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 0 auto 20px auto;
+            border: 1px solid var(--border);
+        }
+
+        .stars {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .cta-box {
+            background: linear-gradient(45deg, #111, #222);
+            padding: 60px;
+            text-align: center;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            margin-top: 80px;
+        }
+
+        /* =========================================
+           9. FOOTER & FLOATING WHATSAPP
+           ========================================= */
+        footer {
+            padding: 50px 0;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            margin-top: 50px;
+        }
+
+        .social-links a {
+            color: #fff;
+            font-size: 1.5rem;
+            margin: 0 15px;
+            transition: 0.3s;
+        }
+
+        .social-links a:hover {
+            color: var(--primary);
+        }
+
+        .floating-whatsapp {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #25D366;
+            color: #fff;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            z-index: 999;
+            transition: 0.3s;
+            animation: pulse 2s infinite;
+        }
+
+        .floating-whatsapp:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+
+        /* =========================================
+           10. RESPONSIVE
+           ========================================= */
+        @media (max-width: 768px) {
+            .hero-content h1 { font-size: 2.5rem; }
+            .nav-links { display: none; } /* Simplified for mobile */
+            .stats-bar { gap: 15px; }
+            .stat-item { padding: 10px 15px; width: 45%; }
+            .section-title { font-size: 2rem; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <nav>
+        <div class="container nav-container">
+            <div class="logo">ZAIMAL<span>x</span>ZAIG</div>
+            <div class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#services">Services</a>
+                <a href="#inventory">Inventory</a>
+                <a href="#trust">Why Us</a>
+            </div>
+            <a href="https://wa.me/+923117889997?text=Salam%20I%20want%20to%20deal" class="btn btn-primary" target="_blank">Contact Now</a>
+        </div>
+    </nav>
+
+    <header id="home">
+        <div class="container hero-content">
+            <h1 class="glitch">TOP PAKISTAN <br><span class="highlight">PUBG TRADER</span></h1>
+            <p>5+ Years of Experience | 100% Secure Deals | 50K - 3 Crore PKR Range</p>
+            
+            <div class="buttons">
+                <a href="#inventory" class="btn btn-primary">View Accounts</a>
+                <a href="#trust" class="btn btn-accent">How We Work</a>
+            </div>
+
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-num" data-target="5">5+</span>
+                    <span class="stat-label">Years Exp</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num" data-target="5000">1000+</span>
+                    <span class="stat-label">Deals Done</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num" data-target="100">100%</span>
+                    <span class="stat-label">Trusted</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="services" class="section-padding">
+        <div class="container">
+            <h2 class="section-title">Our Services</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <i class="fas fa-gamepad service-icon"></i>
+                    <h3>Premium Accounts</h3>
+                    <p>From Budget (50k) to High-End (3 Crore). We have Conqueror, Glacier Max, and Mythic Fashion accounts.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-coins service-icon"></i>
+                    <h3>UC Top-Up</h3>
+                    <p>Secure and fast UC loading for any region. Best rates in Pakistan guaranteed.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-handshake service-icon"></i>
+                    <h3>Middleman Service</h3>
+                    <p>Secure your deals through us. We hold funds and verify accounts to prevent scams.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="inventory" class="section-padding">
+        <div class="container">
+            <h2 class="section-title">Live Inventory</h2>
+            
+            <div class="inventory-filters">
+                <button class="filter-btn active" onclick="filterSelection('all')">All</button>
+                <button class="filter-btn" onclick="filterSelection('budget')">Budget (50k-100k)</button>
+                <button class="filter-btn" onclick="filterSelection('premium')">Premium (100k-1M)</button>
+                <button class="filter-btn" onclick="filterSelection('god')">God Tier (1M+)</button>
+            </div>
+
+            <div class="inventory-grid">
+                <div class="account-card budget">
+                    <div class="card-img">
+                        <span class="badge">SOLD OUT</span>
+                        <i class="fas fa-user-ninja"></i>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-price">PKR 85,000</span>
+                        <h3>Glacier Level 5 + Suits</h3>
+                        <ul class="card-specs">
+                            <li><i class="fas fa-check"></i> M416 Glacier Lvl 5</li>
+                            <li><i class="fas fa-check"></i> 3 X-Suits</li>
+                            <li><i class="fas fa-check"></i> ACE Master</li>
+                        </ul>
+                        <a href="https://wa.me/YOUR_PHONE_NUMBER?text=Interested%20in%2085k%20Account" class="btn btn-accent" style="width:100%">Inquire</a>
+                    </div>
+                </div>
+
+                <div class="account-card premium">
+                    <div class="card-img">
+                        <span class="badge">HOT</span>
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-price">PKR 550,000</span>
+                        <h3>Full Max Inventory</h3>
+                        <ul class="card-specs">
+                            <li><i class="fas fa-check"></i> 5 Max Guns</li>
+                            <li><i class="fas fa-check"></i> Poseidon Max</li>
+                            <li><i class="fas fa-check"></i> Unique ID</li>
+                        </ul>
+                        <a href="https://wa.me/YOUR_PHONE_NUMBER?text=Interested%20in%20550k%20Account" class="btn btn-accent" style="width:100%">Inquire</a>
+                    </div>
+                </div>
+
+                <div class="account-card god">
+                    <div class="card-img">
+                        <span class="badge">GOD TIER</span>
+                        <i class="fas fa-dragon"></i>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-price">PKR 2.5 Crore</span>
+                        <h3>The Collector's Dream</h3>
+                        <ul class="card-specs">
+                            <li><i class="fas fa-check"></i> ALL Guns Max</li>
+                            <li><i class="fas fa-check"></i> ALL X-Suits Max</li>
+                            <li><i class="fas fa-check"></i> Old Mummy / Pharaoh</li>
+                        </ul>
+                        <a href="https://wa.me/YOUR_PHONE_NUMBER?text=Interested%20in%20God%20Tier%20Account" class="btn btn-accent" style="width:100%">Inquire</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <p style="margin-bottom: 20px; color: #888;">*Inventory changes daily. Join WhatsApp for latest updates.*</p>
+                <a href="https://wa.me/YOUR_PHONE_NUMBER" class="btn btn-primary">Join WhatsApp Group</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="trust" class="section-padding trust-section">
+        <div class="container">
+            <h2 class="section-title">Safe Trading Rules</h2>
+            
+            <div class="features-list">
+                <div class="feature-row">
+                    <div class="feature-icon"><i class="fas fa-map-marker-alt" style="color: var(--success)"></i></div>
+                    <div>
+                        <h3>Face-to-Face Deals Available</h3>
+                        <p>We offer F2F deals across Pakistan (Lahore, Karachi, Islamabad, Multan) for high-value transactions to ensure 100% trust.</p>
+                    </div>
+                </div>
+
+                <div class="feature-row">
+                    <div class="feature-icon"><i class="fas fa-shield-alt" style="color: var(--accent)"></i></div>
+                    <div>
+                        <h3>Standard Procedure</h3>
+                        <p><strong>Buying:</strong> Payment always first. <br> <strong>Selling:</strong> Logins first for verification. No exceptions.</p>
+                    </div>
+                </div>
+
+                <div class="feature-row warning">
+                    <div class="feature-icon"><i class="fas fa-ban" style="color: var(--danger)"></i></div>
+                    <div>
+                        <h3>STRICTLY NO CARDING / HARAM</h3>
+                        <p>We do not deal in carding, hacking, or illegal methods. All accounts are legitimate. Time wasters please stay away.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding">
+        <div class="container">
+            <div class="cta-box">
+                <h2>Ready to Upgrade Your Game?</h2>
+                <p style="margin: 20px 0; color: #ccc;">Contact ZAIMALxZAIG today. Serious buyers only.</p>
+                <a href="https://wa.me/YOUR_PHONE_NUMBER" class="btn btn-primary"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="logo" style="margin-bottom: 20px;">ZAIMAL<span>x</span>ZAIG</div>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-tiktok"></i></a>
+            </div>
+            <p style="margin-top: 20px; color: #555; font-size: 0.8rem;">&copy; 2024 ZAIMALxZAIG. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/YOUR_PHONE_NUMBER" class="floating-whatsapp" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <script>
+        // 1. Particle Background Animation
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particlesArray;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2;
+                this.speedX = (Math.random() * 1) - 0.5;
+                this.speedY = (Math.random() * 1) - 0.5;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = '#00e5ff';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            particlesArray = [];
+            for (let i = 0; i < 100; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+            }
+            // Connect particles with lines
+            connect();
+            requestAnimationFrame(animate);
+        }
+
+        function connect() {
+            for (let a = 0; a < particlesArray.length; a++) {
+                for (let b = a; b < particlesArray.length; b++) {
+                    let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x))
+                    + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
+                    if (distance < (canvas.width/7) * (canvas.height/7)) {
+                        let opacityValue = 1 - (distance/10000);
+                        ctx.strokeStyle = 'rgba(0, 229, 255,' + opacityValue * 0.1 + ')';
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        window.addEventListener('resize', function(){
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            init();
+        });
+
+        init();
+        animate();
+
+        // 2. Inventory Filter Logic
+        function filterSelection(category) {
+            const cards = document.getElementsByClassName("account-card");
+            const btns = document.getElementsByClassName("filter-btn");
+            
+            // Remove active class from buttons
+            for (let b of btns) {
+                b.classList.remove("active");
+                // Add active to clicked button (simple logic for now)
+                if(b.innerText.toLowerCase().includes(category) || (category === 'all' && b.innerText === 'All')) {
+                    b.classList.add("active");
+                }
+            }
+
+            // Show/Hide cards
+            for (let i = 0; i < cards.length; i++) {
+                if (category === "all") {
+                    cards[i].style.display = "block";
+                } else {
+                    if (cards[i].classList.contains(category)) {
+                        cards[i].style.display = "block";
+                    } else {
+                        cards[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
